@@ -45,10 +45,37 @@ const MergePDF = () => {
     const formData = new FormData();
     files.forEach((file) => formData.append('pdfs', file));
 
+    // This is hardcoded for demonstration purposes. In a real application this application
+    // should already have the token stored from when the user logged in.
+    let token = localStorage.getItem('token');
+
+    if (!token) {
+      const response = await axios.post(`${API_URL}/pdfapp/api/v1/auth/login`, {
+        email: 'infoitsci@mju.ac.th',
+        password: 'itsci2025'
+      });
+
+      if (response.status !== 200) {
+        setError('Authentication failed. Please check your credentials.');
+        setIsLoading(false);
+        return;
+      }
+
+      token = response.data.token;
+      if (!token) {
+        setError('Authentication failed. No token received.');
+        setIsLoading(false);
+        return;
+      }
+
+      localStorage.setItem('token', token);
+    }
+
     try {
       const response = await axios.post(`${API_URL}/pdfapp/api/v1/merge`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`,
         },
         responseType: 'blob',
       });

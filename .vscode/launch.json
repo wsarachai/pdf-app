@@ -12,6 +12,19 @@
                 "<node_internals>/**"
             ],
             "type": "node"
+        },
+        {
+            "name": "Launch React App",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}",
+            "sourceMapPathOverrides": {
+                "webpack://_N_E/*": "${workspaceFolder}/*"
+            },
+            "sourceMaps": true,
+            "trace": true,
+            "disableNetworkCache": true
         }
     ]
 }

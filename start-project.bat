@@ -37,7 +37,7 @@ goto end
 :frontend
 echo.
 echo Starting Frontend App...
-start "PDF-App Frontend" cmd /k "cd frontend && npm start"
+start "PDF-App Frontend" cmd /k "cd frontend && npm run dev"
 goto end
 
 :both
@@ -46,7 +46,7 @@ echo Starting Backend Server...
 start "GDP Backend" cmd /k "cd backend && npm start"
 timeout /t 3 >nul
 echo Starting Frontend App...
-start "GDP Frontend" cmd /k "cd frontend && npm start"
+start "GDP Frontend" cmd /k "cd frontend && npm run dev"
 goto end
 
 :both_debug
@@ -55,7 +55,7 @@ echo Starting Backend Server in DEBUG mode...
 start "GDP Backend DEBUG" cmd /k "cd backend && npm run debug"
 timeout /t 3 >nul
 echo Starting Frontend App...
-start "GDP Frontend" cmd /k "cd frontend && npm start"
+start "GDP Frontend" cmd /k "cd frontend && npm run dev"
 goto end
 
 :invalid
