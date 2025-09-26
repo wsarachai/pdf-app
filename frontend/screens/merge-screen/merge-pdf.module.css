@@ -24,6 +24,30 @@
   margin: 10px 0;
 }
 
+.fileList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.deleteButton {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 2px 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.deleteButton:hover {
+  background-color: #d32f2f;
+}
+
 .error {
   color: red;
   margin-bottom: 10px;
@@ -36,6 +60,7 @@
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: 20px;
 }
 
 .mergeButton:disabled {
@@ -51,4 +76,30 @@
 
 .downloadLink:hover {
   text-decoration: underline;
+}
+
+.fileNameCell {
+  text-align: left;
+  padding: 5px;
+}
+
+.fileTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fileTable th, .fileTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.fileTable th {
+  background-color: #f2f2f2;
+  text-align: left;
+}
+
+.header {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
 }

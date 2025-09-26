@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import { MdDelete, MdPictureAsPdf } from 'react-icons/md';
 import styles from './merge-pdf.module.css';
 
 const API_URL = "http://localhost:5000";
@@ -17,7 +18,12 @@ const MergePDF = () => {
       const selectedFiles = Array.from(event.target.files).filter(
         (file) => file.type === 'application/pdf'
       );
-      setFiles(selectedFiles);
+
+      const uniqueFiles = selectedFiles.filter(
+        (newFile) => !files.some((existingFile) => existingFile.name === newFile.name)
+      );
+
+      setFiles((prevFiles) => [...prevFiles, ...uniqueFiles]);
     }
   };
 
@@ -26,11 +32,20 @@ const MergePDF = () => {
     const droppedFiles = Array.from(event.dataTransfer.files).filter(
       (file) => file.type === 'application/pdf'
     );
-    setFiles((prevFiles) => [...prevFiles, ...droppedFiles]);
+
+    const uniqueFiles = droppedFiles.filter(
+      (newFile) => !files.some((existingFile) => existingFile.name === newFile.name)
+    );
+
+    setFiles((prevFiles) => [...prevFiles, ...uniqueFiles]);
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+  };
+
+  const handleDelete = (index: number) => {
+    setFiles(files.filter((_, i) => i !== index));
   };
 
   const handleMerge = async () => {
@@ -92,7 +107,7 @@ const MergePDF = () => {
 
   return (
     <div className={styles.container}>
-      <h1>Merge PDF Files</h1>
+      <h1 className={styles.header}>Merge PDF Files</h1>
       <div
         className={styles.dropZone}
         onDrop={handleDrop}
@@ -107,13 +122,39 @@ const MergePDF = () => {
           className={styles.fileInput}
         />
       </div>
-      {files.length > 0 && (
-        <ul className={styles.fileList}>
-          {files.map((file, index) => (
-            <li key={index}>{file.name}</li>
-          ))}
-        </ul>
-      )}
+      <div className={styles.fileListContainer}>
+        {files.length > 0 && (
+          <table className={styles.fileTable}>
+            <thead>
+              <tr>
+                <th></th>
+                <th>File Name</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {files.map((file, index) => (
+                <tr key={index} className={styles.fileTableRow}>
+                  <td className={styles.fileNameCell}>
+                    <span className={styles.fileIcon}><MdPictureAsPdf /></span>
+                  </td>
+                  <td className={`${styles.fileNameCell} ${styles.alignLeft}`}>
+                    {file.name}
+                  </td>
+                  <td className={styles.actionCell}>
+                    <button
+                      className={styles.deleteButton}
+                      onClick={() => handleDelete(index)}
+                    >
+                      <MdDelete />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
       {error && <p className={styles.error}>{error}</p>}
       <button onClick={handleMerge} disabled={isLoading} className={styles.mergeButton}>
         {isLoading ? 'Merging...' : 'Merge PDFs'}
