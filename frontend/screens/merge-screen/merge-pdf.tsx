@@ -5,7 +5,7 @@ import axios from 'axios';
 import { MdDelete, MdPictureAsPdf } from 'react-icons/md';
 import styles from './merge-pdf.module.css';
 
-const API_URL = "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const MergePDF = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -66,8 +66,8 @@ const MergePDF = () => {
 
     if (!token) {
       const response = await axios.post(`${API_URL}/pdfapp/api/v1/auth/login`, {
-        email: 'infoitsci@mju.ac.th',
-        password: 'itsci2025'
+        email: process.env.NEXT_PUBLIC_AUTH_EMAIL || 'infoitsci@mju.ac.th',
+        password: process.env.NEXT_PUBLIC_AUTH_PASSWORD || 'itsci2025'
       });
 
       if (response.status !== 200) {
