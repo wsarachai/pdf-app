@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { MdDelete, MdPictureAsPdf } from 'react-icons/md';
 import styles from './merge-pdf.module.css';
@@ -12,6 +12,7 @@ const MergePDF = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -114,7 +115,11 @@ const MergePDF = () => {
         onDragOver={handleDragOver}
       >
         <p>Drag and drop PDF files here, or click to select files.</p>
+        <button onClick={() => fileInputRef.current?.click()} className={styles.selectButton}>
+          Select Files
+        </button>
         <input
+          ref={fileInputRef}
           type="file"
           accept="application/pdf"
           multiple
@@ -160,8 +165,8 @@ const MergePDF = () => {
         {isLoading ? 'Merging...' : 'Merge PDFs'}
       </button>
       {downloadUrl && (
-        <a href={downloadUrl} download="merged.pdf" className={styles.downloadLink}>
-          Download Merged PDF
+        <a href={downloadUrl} target="_blank" className={styles.downloadLink}>
+          View Merged PDF
         </a>
       )}
     </div>

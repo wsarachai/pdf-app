@@ -18,6 +18,20 @@
   display: none;
 }
 
+.selectButton {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.selectButton:hover {
+  background-color: #0056b3;
+}
+
 .fileList {
   list-style: none;
   padding: 0;
