@@ -65,44 +65,52 @@ const MergePDF = () => {
     // should already have the token stored from when the user logged in.
     let token = localStorage.getItem('token');
 
-    if (!token) {
-      const response = await axios.post(`${API_URL}/pdfapp/api/v1/auth/login`, {
-        email: process.env.NEXT_PUBLIC_AUTH_EMAIL || 'infoitsci@mju.ac.th',
-        password: process.env.NEXT_PUBLIC_AUTH_PASSWORD || 'itsci2025'
-      });
-
-      if (response.status !== 200) {
-        setError('Authentication failed. Please check your credentials.');
-        setIsLoading(false);
-        return;
-      }
-
-      token = response.data.token;
+    const maxRetries = 3;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
       if (!token) {
-        setError('Authentication failed. No token received.');
-        setIsLoading(false);
-        return;
+        const response = await axios.post(`${API_URL}/pdfapp/api/v1/auth/login`, {
+          email: process.env.NEXT_PUBLIC_AUTH_EMAIL || 'example@email.com',
+          password: process.env.NEXT_PUBLIC_AUTH_PASSWORD || 'securepassword'
+        });
+
+        if (response.status !== 200) {
+          setError('Authentication failed. Please check your credentials.');
+          setIsLoading(false);
+          return;
+        }
+
+        token = response.data.token;
+        if (!token) {
+          setError('Authentication failed. No token received.');
+          setIsLoading(false);
+          return;
+        }
+
+        localStorage.setItem('token', token);
       }
 
-      localStorage.setItem('token', token);
-    }
+      try {
+        const response = await axios.post(`${API_URL}/pdfapp/api/v1/merge`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`,
+          },
+          responseType: 'blob',
+        });
 
-    try {
-      const response = await axios.post(`${API_URL}/pdfapp/api/v1/merge`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`,
-        },
-        responseType: 'blob',
-      });
-
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      setDownloadUrl(url);
-    } catch (err) {
-      setError('Failed to merge PDFs. Please try again.');
-    } finally {
-      setIsLoading(false);
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        setDownloadUrl(url);
+      } catch (err) {
+        if (axios.isAxiosError(err) && err.response?.status === 401 && attempt < maxRetries) {
+          localStorage.removeItem('token');
+          token = null;
+          continue; // Retry after re-authentication
+        }
+        setError(`An error occurred while merging PDFs: ${err}`);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
